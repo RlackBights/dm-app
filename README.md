@@ -1,46 +1,91 @@
-# Getting Started with Create React App
+# Project Æris 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Welcome to **Project Æris**!
+A neat, steampunk-themed web app for easy campaign management!
 
-## Available Scripts
+I'm sure you - as everyone here - **love** digging through your tens, if not *hundreds* (may god have mercy upon your soul) of text files in a folder structure not yet mapped out by cartographers!
 
-In the project directory, you can run:
+We all do that, right? ***Right?***
 
-### `npm start`
+Well no matter, this wonderful tool will try to provide a remedy to this neverending cycle of looking for notes!
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Features
 
-### `npm test`
+### None :D
+- For now, just started development, gimme time to cook something up
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Keybinds
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+I want to make the usage of this app as smooth as possible, so I figured I'll add some keybinds to make the life of everyone easier. I'll update this table as I develop new features!
+| Keybind | Feature                   |
+|---------|---------------------------|
+| `Tab`   | Opens the navigation menu |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Roadmap
 
-### `npm run eject`
+I'm planning on adding lots of neat stuff to the project, and you can find the current progress and all of my ideas/plans on my Trello board [here](https://trello.com/b/KJmSj30K/dm-app)!
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+ I'll try to keep the following list updated as well, with the most important features and the ones I'm currently working on!
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### WIP
+- **Encounter Creator:** Lets the DM generate encounters on the fly with lots of customizazion options!
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Essential features
+- **Session Summary:** Gathers information from the last session and compiles them into a short description the DM can skim over in a matter of minutes to help them get back on track quickly!
+- **Story Progression Tracker:** A checklist that contains every important lore-point planned for the whole campaign, which the DM can edit at any time!
+- **Turn Order Tracker:** Quite self-explanatory, just tracks information like initiative related to the current combat. I'm planning on making this feature into a while Combat Tracker later on, with stats and status effects!
+- **Campaign Timeline:** Gives the DM a timeline to plot different events on. I'd imagine it being useful for recording every historically significant event that happened before the players arrived, so the DM can be consistent with reffering back to said events. Maybe plans for branching timelines in the future?
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+---
 
-## Learn More
+## Installation
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Prerequisites
+(Presumably, you have both since you're here somehow)
+- A modern web browser (e.g., Chrome, Firefox, Edge)
+- Internet connection
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Steps
+**Whole project:**
+1. Clone or download the repository
+2. Run `npm i` to download the required modules
+3. Run `npm run start` to start a local server, and enjoy!
+4. Optional: You can build the project yourself using `npm run build`
+(Note that you will probably need to modify the `homepage` value in the package.json file when hosting it somewhere)
+
+---
+
+## Usage
+
+### Navigation
+- Use the collapsible sidebar to access the main features.
+- Keyboard shortcut support!!!
+
+### Creating and Managing Content
+- Select a feature (e.g., Encounter Creator) from the sidebar.
+- Use the intuitive interface to input data and save your work.
+- Link related elements (e.g., NPCs to encounters, notes to maps) for seamless management.
+- **I will write short descriptions for every feature that's done, so you can refer back here if anything's unclear**
+
+---
+
+## Contribution
+
+### How to Contribute
+I'm not taking actual contributions as of now, first I want to implement everything I planned for the app myself. After I'm done contributions will be welcome though!
+
+### Bug Reports
+Open an issue here on GitHub (no idea how to do that yet, but I believe in you!) and I'll take a look at it! Try tagging it with the severity if you can, so I can focus on the more important ones first!
+
+---
+
+## Acknowledgments
+- Thanks to the TTRPG community for inspiring this project, love you all!
+- Special shoutout to my wonderful friends for helping me come up with new ideas, designs, and testing features as I write them!
+- And of course, huuuge thanks to **you** for checking this out, glad to see that my hobby actually interests, and possibly helps other people with similar problems like mine

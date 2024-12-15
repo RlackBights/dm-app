@@ -1,12 +1,37 @@
+/*
+ .d8888b.                                                         
+d88P  Y88b                                                        
+888    888                                                        
+888         .d88b.  88888b.d88b.  88888b.d88b.   .d88b.  88888b.  
+888        d88""88b 888 "888 "88b 888 "888 "88b d88""88b 888 "88b 
+888    888 888  888 888  888  888 888  888  888 888  888 888  888 
+Y88b  d88P Y88..88P 888  888  888 888  888  888 Y88..88P 888  888 
+ "Y8888P"   "Y88P"  888  888  888 888  888  888  "Y88P"  888  888 
+*/
+
+:root {
+  --text: #FFFFF0;
+  --background: #2B2A27;
+  --primary: #f9b816;
+  --primary-muted: #62490a;
+  --secondary: #702828;
+  --accent: #02cbba;
+
+  color: var(--text);
+}
+
+@font-face {
+  font-family: Steamwreck;
+  src: url("../resources/fonts/steamwreck-font/Steamwreck-07pd.ttf") format("truetype");
+}
+
 body {
+  overflow: hidden;
   margin: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #1d1d1d;
-  color: #d3d3d3;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  background-color: var(--background);
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -17,6 +42,9 @@ body {
   margin: 0;
   padding: 0;
   user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .App > svg {
@@ -24,8 +52,184 @@ body {
   top: 50%;
   left: 50%;
   scale: 35;
-  color: #191919;
+  color: var(--primary-muted);
   z-index: -1;
+  animation-name: cog-turn;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.000, 1.160, 1.000, -0.280);
+}
+
+.searchbar-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 1vw;
+}
+
+input[type="text"] {
+  background-color: var(--background);
+  outline: none;
+  border: 2px solid var(--primary);
+  border-radius: 1rem;
+  padding: 1vh 1vw;
+  min-width: 20vw;
+  min-height: 4vh;
+  font-size: 2.5vmin;
+  color: var(--text);
+}
+
+input[type="text"]:focus {
+  border: 2px solid var(--accent);
+}
+
+.searchbar-wrapper > button {
+  cursor: pointer;
+  aspect-ratio: 1;
+  border: none;
+  background-color: var(--accent);
+  padding: 0;
+  margin: 0;
+  color: var(--background);
+  min-height: 6vh;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.searchbar-wrapper svg {
+  padding: 0;
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 1rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 1rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-muted);
+}
+
+button {
+  background: none;
+  border: 2px solid var(--primary);
+  padding: 1vh 1vw;
+  margin: 1vh 1vw;
+  border-radius: 1rem;
+  font-size: 3vmin;
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+button:hover {
+  scale: 1.05;
+}
+
+.foldable-section-container {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 0 3vmin 3vmin 3vmin;
+  border-radius: 1rem;
+  gap: 2vmin;
+  transition: all 0.2s;
+}
+
+.foldable-section-container > p {
+  cursor: pointer;
+  font-size: 5vmin;
+  margin: 1vmin;
+}
+
+.compressed-section {
+  height: 5.5vh;
+  padding: 1vmin;
+}
+
+.compressed-section > :not(:first-child) {
+  width: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
+}
+
+input[type="number"] {
+  width: 5vmin;
+  height: 5vmin;
+  background-color: var(--background);
+  border: 2px solid var(--primary);
+  outline: none;
+  border-radius: 1rem;
+  color: var(--text);
+  text-align: center;
+}
+
+input[type="number"]:focus {
+  border-color: var(--accent);
+}
+
+input[type="checkbox"] {
+  position: relative;
+  width: 3vmin;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  border-radius: 0.5rem;
+  border: 2px solid var(--primary);
+  background-color: var(--background);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: var(--primary);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+textarea {
+  background-color: var(--background);
+  border: 2px solid var(--primary);
+  border-radius: 1rem;
+  color: var(--text);
+  padding: 1vmin;
+  box-sizing: border-box;
+}
+
+textarea:focus {
+  border-color: var(--accent);
 }
 
 /*
@@ -40,10 +244,9 @@ Y88b  d88P 888 Y88b 888 Y8b.     888 d88P 888  888 888
 */
 
 #sidebar-container {
-  background-color: rgba(0, 0, 0, 0.2);
   border-top-right-radius: 1rem;
   border-bottom-right-radius: 1rem;
-  border-right: 0.5vw solid #131313;
+  background-color: var(--primary-muted);
   width: 20vw;
   height: 100vh;
   overflow: hidden;
@@ -67,20 +270,19 @@ Y88b  d88P 888 Y88b 888 Y8b.     888 d88P 888  888 888
   text-align: center;
   padding: 0;
   margin: 0;
-  font-weight: bold;
-  font-size: 4vmin;
+  font-size: 6vmin;
   position: relative;
   width: 100%;
+  font-family: Steamwreck;
 }
 
 #sidebar-header p::after {
   content: "";
   position: absolute;
-  top: 125%;
   display: block;
   width: 100%;
-  height: 0.3vh;
-  background-color: black;
+  height: 0.75vh;
+  background-color: var(--background);
 }
 
 #sidebar-header svg {
@@ -102,18 +304,17 @@ Y88b  d88P 888 Y88b 888 Y8b.     888 d88P 888  888 888
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 2.5vmin;
+  font-size: 3vmin;
 }
 
 #sidebar-content > div > p {
   margin: 0;
   padding: 0;
-  text-align: center;
 }
 
 #sidebar-content > div:hover {
-  font-size: 2.75vmin;
-  font-weight: bold;
+  font-size: 3.5vmin;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 /*
@@ -127,21 +328,29 @@ Y88b  d88P 888 Y88b 888 Y8b.     888 d88P 888  888 888
 888       888 "Y888888 888 888  888      888       888  "Y8888  888  888  "Y88888
 */
 
-#main-container {
-  width: 100%;
-  height: 100%;
+#welcome-container {
+  width: 100vw;
+  height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-
-
-#encounter-creator {
-  width: 100%;
-  height: 100%;
+#welcome-title {
+  font-family: Steamwreck;
+  font-size: 10vmin;
   margin: 0;
-  padding: 0;
+}
+
+#welcome-title > a {
+  text-decoration: none;
+  color: var(--accent);
+}
+
+#welcome-body {
+  font-size: 3vmin;
+  width: 30%;
 }
 
 /*
@@ -154,3 +363,134 @@ Y88b  d88P 888 Y88b 888 Y8b.     888 d88P 888  888 888
 888        888  888 Y88b.   Y88..88P Y88b 888 888  888 Y88b. Y8b.     888          X88 
 8888888888 888  888  "Y8888P "Y88P"   "Y88888 888  888  "Y888 "Y8888  888      88888P'
 */
+
+#encounter-creator {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ .d8888b.  888                                        888                             
+d88P  Y88b 888                                        888                             
+888    888 888                                        888                             
+888        88888b.   8888b.  888d888 8888b.   .d8888b 888888 .d88b.  888d888 .d8888b  
+888        888 "88b     "88b 888P"      "88b d88P"    888   d8P  Y8b 888P"   88K      
+888    888 888  888 .d888888 888    .d888888 888      888   88888888 888     "Y8888b. 
+Y88b  d88P 888  888 888  888 888    888  888 Y88b.    Y88b. Y8b.     888          X88 
+ "Y8888P"  888  888 "Y888888 888    "Y888888  "Y8888P  "Y888 "Y8888  888      88888P'
+*/
+
+#character-container {
+  width: 80%;
+  height: 80%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.2), transparent);
+  border-radius: 1rem;
+  padding: 4vh 4vw;
+}
+
+#character-menu-wrapper {
+  position: absolute;
+  top: 4vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#character-menu-wrapper > .searchbar-wrapper {
+  height: 16vh;
+}
+
+#character-menu-wrapper > button {
+  width: 6vmin;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  font-size: 4vmin;
+  padding: 0.5vh 0.5vw;
+}
+
+#character-content {
+  height: 64vh;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2vmin;
+  padding: 2vmin;
+}
+
+.character-profile-card {
+  cursor: pointer;
+  width: 20vmin;
+  height: 20vmin;
+  background: transparent;
+  border: 2px solid var(--accent);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2vw;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.character-profile-card:hover {
+  transform: translateY(-5%);
+  scale: 1.05;
+}
+
+#character-creator {
+  position: absolute;
+  display: flex;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+  gap: 2vmin;
+}
+
+#character-creator section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2vmin;
+}
+
+#character-creator section input[type="text"] {
+  min-width: 10vw;
+  width: 10vw;
+}
+
+/*
+       d8888          d8b                        888    d8b                            
+      d88888          Y8P                        888    Y8P                            
+     d88P888                                     888                                   
+    d88P 888 88888b.  888 88888b.d88b.   8888b.  888888 888  .d88b.  88888b.  .d8888b  
+   d88P  888 888 "88b 888 888 "888 "88b     "88b 888    888 d88""88b 888 "88b 88K      
+  d88P   888 888  888 888 888  888  888 .d888888 888    888 888  888 888  888 "Y8888b. 
+ d8888888888 888  888 888 888  888  888 888  888 Y88b.  888 Y88..88P 888  888      X88 
+d88P     888 888  888 888 888  888  888 "Y888888  "Y888 888  "Y88P"  888  888  88888P'
+*/
+
+@keyframes cog-turn {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(60deg);
+  }
+}
