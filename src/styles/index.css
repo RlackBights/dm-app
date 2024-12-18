@@ -148,6 +148,10 @@ button:hover {
   transition: all 0.2s;
 }
 
+.foldable-section-container:not(.compressed-section) {
+  min-height: fit-content;
+}
+
 .foldable-section-container > p {
   cursor: pointer;
   font-size: 5vmin;
@@ -156,6 +160,7 @@ button:hover {
 
 .compressed-section {
   height: 5.5vh;
+  min-height: 5.5vh;
   padding: 1vmin;
 }
 
@@ -230,6 +235,65 @@ textarea {
 
 textarea:focus {
   border-color: var(--accent);
+}
+
+select:not([multiple]) {
+  background-color: var(--background);
+  color: var(--text);
+  border: 2px solid var(--primary);
+  border-radius: 1rem;
+  padding: 1vmin;
+  font-size: 2vmin;
+  outline: none;
+}
+
+select[multiple] {
+  background-color: var(--background);
+  color: var(--text);
+  border: none;
+  border-radius: 1rem;
+  padding: 1vmin;
+  font-size: 2.25vmin;
+}
+
+select:focus {
+  border-color: var(--accent);
+}
+
+.multi-query-container {
+  border: 2px dashed var(--primary);
+  border-radius: 1rem;
+  padding: 2vmin;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2vmin;
+}
+
+.multi-query-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1vmin;
+}
+
+.multi-query-header > select {
+  min-width: 20vw;
+}
+
+.multi-query-header > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.multi-query-header > div > button {
+  aspect-ratio: 1;
+  border-radius: 100%;
+  padding: 0.5vmin;
 }
 
 /*
@@ -447,16 +511,18 @@ Y88b  d88P 888  888 888  888 888    888  888 Y88b.    Y88b. Y8b.     888        
 
 #character-creator {
   position: absolute;
+  padding: 5vh 0 5vh 0;
+  box-sizing: border-box;
   display: flex;
   overflow-y: scroll;
   overflow-x: hidden;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   z-index: 10;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.3);
   transition: all 0.2s;
   gap: 2vmin;
 }
