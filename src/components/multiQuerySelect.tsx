@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { QuerySelectData } from "./querySelect";
 
-export default function MultiQuerySelect({ queriedData, name, keyOverride } : QuerySelectData)
+export default function MultiQuerySelect({ queriedData, name, keyOverride, value } : QuerySelectData)
 {
     const [content, setContent] = useState<Array<string>>([]);
     const [selected, setSelected] = useState({});

@@ -64,6 +64,65 @@ export interface characterType {
     backstory: string;
 }
 
+export const emptyCharacter: characterType = {
+    id: 0,
+    // Basic Info
+    name: "",
+    race: "",
+    class: "",
+    level: 1,
+    background: "",
+    alignment: "",
+    origin: "",
+    location: "",
+
+    // Core Stats
+    strength: 0,
+    dexterity: 0,
+    constitution: 0,
+    intelligence: 0,
+    wisdom: 0,
+    charisma: 0,
+
+    // Combat Stats
+    maxHp: 0,
+    currentHp: 0,
+    temporaryHp: 0,
+    armorClass: 0,
+    initiative: 0,
+    speed: 0,
+
+    // Additional Info
+    proficiencyBonus: 0,
+    inspiration: false,
+    savingThrows: [],
+    skills: [],
+    languages: [],
+    features: [],
+
+    // Equipment
+    inventory: [],
+    equipment: [],
+    copper: 0,
+    silver: 0,
+    gold: 0,
+    platinum: 0,
+
+    // Spellcasting
+    spellcastingClass: "",
+    spellcastingAbility: "",
+    spellSlots: [],
+    spells: [],
+
+    // Character Details
+    personalityTraits: "",
+    ideals: "",
+    bonds: "",
+    flaws: "",
+    backstory: "",
+};
+
+
 function findParentWithClass(element: HTMLElement, className: string): HTMLElement | null {
     if (!element) return null; // Base case: no element (e.g., reached the root)
     if (element.classList && element.classList.contains(className)) {
@@ -79,6 +138,7 @@ export default function CharacterTracker()
     const [characters, setCharacters] = useState<Array<characterType>>([]);
     const [isCreatorOpen, setIsCreatorOpen] = useState(false);
     const [queriedData, setQueriedData] = useState<any>();
+    const [activeCharacter, setActiveCharacter] = useState<characterType>(emptyCharacter);
 
     sessionStorage.setItem("openOverlay", JSON.stringify(isCreatorOpen));
 
@@ -95,6 +155,10 @@ export default function CharacterTracker()
             }
         });
     }, [])
+
+    useEffect(() => {
+        console.log(activeCharacter);
+    }, [activeCharacter])
     
 
     useEffect(() => {
@@ -108,147 +172,105 @@ export default function CharacterTracker()
             <form id='character-creator' style={{marginBottom: isCreatorOpen ? "0" : "-200vh"}} onSubmit={(e) => {
                 e.preventDefault();
                 
-                const elemList = (e.target as HTMLFormElement).elements;
-                let outObj = {};
-                for (let i = 0; i < elemList.length; i++)
-                {
-                    if (findParentWithClass(elemList[i] as HTMLElement, "multi-query-container") && elemList[i].nodeName == "SELECT" && (elemList[i] as HTMLSelectElement).name.includes("multiQueryData")) {
-                        const val = JSON.parse(window.sessionStorage.getItem(`multi-select-${(elemList[i] as HTMLSelectElement).name.split('-')[1]}`)!);
-                        const nice = Object.keys(val).map(k => ({ key: k, value: val[k]}));
-                        console.log(nice);
-                        outObj = {...outObj, [(elemList[i] as HTMLSelectElement).name.split('-')[1]]: nice}
-                        
-                    } else {
-                        switch (elemList[i].nodeName) {
-                            case "INPUT":
-                                switch (elemList[i].getAttribute("type")) {
-                                    case "text":
-                                        outObj = {...outObj, [elemList[i].getAttribute("name")!.toString()]: (elemList[i] as HTMLInputElement).value};
-                                        (elemList[i] as HTMLInputElement).value = "";
-                                        break;
-                                    case "number":
-                                        outObj = {...outObj, [elemList[i].getAttribute("name")!.toString()]: Number((elemList[i] as HTMLInputElement).value)};
-                                        (elemList[i] as HTMLInputElement).value = "";
-                                        break;
-                                    case "checkbox":
-                                        outObj = {...outObj, [elemList[i].getAttribute("name")!.toString()]: Boolean((elemList[i] as HTMLInputElement).checked)};
-                                        (elemList[i] as HTMLInputElement).value = "";
-                                        break;
-                                }
-                                break;
-                            case "TEXTAREA":
-                                outObj = {...outObj, [elemList[i].getAttribute("name")!.toString()]: (elemList[i] as HTMLTextAreaElement).value.split('\n')};
-                                (elemList[i] as HTMLTextAreaElement).value = "";
-                                break;
-                            case "SELECT":
-                                outObj = {...outObj, [elemList[i].getAttribute("name")!.toString()]: (elemList[i] as HTMLSelectElement).value};
-                                (elemList[i] as HTMLSelectElement).value = "";
-                            default:
-                                break;
-                        }
-                    }
+                if (window.sessionStorage.getItem("newChar") == "true") {
+                    const { id, ...newChar} = activeCharacter;
+                    db.add(newChar).then(() => {
+                        db.getAll().then((res) => {
+                            setCharacters(res);
+                        })
+                    })
+                } else {
+                    db.update(activeCharacter).then(() => {
+                        db.getAll().then((res) => {
+                            setCharacters(res);
+                        })
+                    })
                 }
 
-                if (window.sessionStorage.getItem("charID") !== "-1") {
-                    db.update({id: Number(window.sessionStorage.getItem("charID")), ...outObj}).then(() => {
-                        db.getAll().then((res) => {
-                            setCharacters(res);
-                            setIsCreatorOpen(false);
-                            window.sessionStorage.setItem("charID", "-1");
-                        })
-                    })
-                } else
-                {
-                    db.add(outObj).then(() => {
-                        db.getAll().then((res) => {
-                            setCharacters(res);
-                            setIsCreatorOpen(false);
-                        })
-                    })
-                }
+                setIsCreatorOpen(false);
+                // do magic ig
 
             }}>
                 <FoldableSection title="Basics">
                     <section>
-                        <input type="text" name='name' placeholder="Name" tabIndex={-1} />
-                        <QuerySelect queriedData={queriedData} name="race"/>
-                        <QuerySelect queriedData={queriedData} name="class" keyOverride="classes"/>
-                        <input type="number" name="level" placeholder='LVL' tabIndex={-1} />
+                        <input type="text" name='name' value={activeCharacter.name} onChange={(e) => setActiveCharacter(curr => ({...curr, name: e.target.value}))} required placeholder="Name" tabIndex={-1} />
+                        <QuerySelect queriedData={queriedData} name="race" value={{get: activeCharacter, set: setActiveCharacter}}/>
+                        <QuerySelect queriedData={queriedData} name="class" value={{get: activeCharacter, set: setActiveCharacter}} keyOverride="classes"/>
+                        <input type="number" name="level" value={activeCharacter.level} onChange={(e) => setActiveCharacter(curr => ({...curr, level: Number(e.target.value)}))} placeholder='LVL' tabIndex={-1} />
                     </section>
                     <section>
-                        <QuerySelect queriedData={queriedData} name="background"/>
-                        <QuerySelect queriedData={queriedData} name="alignment"/>
-                        <input type="text" name='origin' placeholder="Origin" tabIndex={-1} />
-                        <input type="text" name='location' placeholder="Location" tabIndex={-1} />
+                        <QuerySelect queriedData={queriedData} name="background" value={{get: activeCharacter, set: setActiveCharacter}}/>
+                        <QuerySelect queriedData={queriedData} name="alignment" value={{get: activeCharacter, set: setActiveCharacter}}/>
+                        <input type="text" name='origin' value={activeCharacter.origin} onChange={(e) => setActiveCharacter(curr => ({...curr, origin: e.target.value.toString()}))} placeholder="Origin" tabIndex={-1} />
+                        <input type="text" name='location' value={activeCharacter.location} onChange={(e) => setActiveCharacter(curr => ({...curr, location: e.target.value.toString()}))} placeholder="Location" tabIndex={-1} />
                     </section>
                 </FoldableSection>
                 <FoldableSection title="Stats">
                     <section>
-                        <input type="number" name='strength' placeholder='STR' tabIndex={-1} />
-                        <input type="number" name='dexterity' placeholder='DEX' tabIndex={-1} />
-                        <input type="number" name='constitution' placeholder='CON' tabIndex={-1} />
-                        <input type="number" name='intelligence' placeholder='INT' tabIndex={-1} />
-                        <input type="number" name='wisdom' placeholder='WIS' tabIndex={-1} />
-                        <input type="number" name='charisma' placeholder='CHA' tabIndex={-1} />
+                        <input type="number" name='strength' value={activeCharacter.strength} onChange={(e) => setActiveCharacter(curr => ({...curr, strength: Number(e.target.value)}))} placeholder='STR' tabIndex={-1} />
+                        <input type="number" name='dexterity' value={activeCharacter.dexterity} onChange={(e) => setActiveCharacter(curr => ({...curr, dexterity: Number(e.target.value)}))} placeholder='DEX' tabIndex={-1} />
+                        <input type="number" name='constitution' value={activeCharacter.constitution} onChange={(e) => setActiveCharacter(curr => ({...curr, constitution: Number(e.target.value)}))} placeholder='CON' tabIndex={-1} />
+                        <input type="number" name='intelligence' value={activeCharacter.intelligence} onChange={(e) => setActiveCharacter(curr => ({...curr, intelligence: Number(e.target.value)}))} placeholder='INT' tabIndex={-1} />
+                        <input type="number" name='wisdom' value={activeCharacter.wisdom} onChange={(e) => setActiveCharacter(curr => ({...curr, wisdom: Number(e.target.value)}))} placeholder='WIS' tabIndex={-1} />
+                        <input type="number" name='charisma' value={activeCharacter.charisma} onChange={(e) => setActiveCharacter(curr => ({...curr, charisma: Number(e.target.value)}))} placeholder='CHA' tabIndex={-1} />
                     </section>
                     <section>
-                        <input type="number" name='maxHp' placeholder='MHP' tabIndex={-1} /> 
-                        <input type="number" name='currentHp' placeholder='HP' tabIndex={-1} />
-                        <input type="number" name='temporaryHp' placeholder='THP' tabIndex={-1} />
-                        <input type="number" name='armorClass' placeholder='AC' tabIndex={-1} />
-                        <input type="number" name='initiative' placeholder='INI' tabIndex={-1} />
-                        <input type="number" name='speed' placeholder='SPD' tabIndex={-1} />
+                        <input type="number" name='maxHp' value={activeCharacter.maxHp} onChange={(e) => setActiveCharacter(curr => ({...curr, maxHp: Number(e.target.value)}))} placeholder='MHP' tabIndex={-1} /> 
+                        <input type="number" name='currentHp' value={activeCharacter.currentHp} onChange={(e) => setActiveCharacter(curr => ({...curr, currentHp: Number(e.target.value)}))} placeholder='HP' tabIndex={-1} />
+                        <input type="number" name='temporaryHp' value={activeCharacter.temporaryHp} onChange={(e) => setActiveCharacter(curr => ({...curr, temporaryHp: Number(e.target.value)}))} placeholder='THP' tabIndex={-1} />
+                        <input type="number" name='armorClass' value={activeCharacter.armorClass} onChange={(e) => setActiveCharacter(curr => ({...curr, armorClass: Number(e.target.value)}))} placeholder='AC' tabIndex={-1} />
+                        <input type="number" name='initiative' value={activeCharacter.initiative} onChange={(e) => setActiveCharacter(curr => ({...curr, initiative: Number(e.target.value)}))} placeholder='INI' tabIndex={-1} />
+                        <input type="number" name='speed' value={activeCharacter.speed} onChange={(e) => setActiveCharacter(curr => ({...curr, speed: Number(e.target.value)}))} placeholder='SPD' tabIndex={-1} />
                     </section>
                 </FoldableSection>
                 <FoldableSection title="Proficiency">
                     <section>
-                        <input type="number" name='proficiencyBonus' placeholder='PRF' tabIndex={-1} />
-                        <input type="checkbox" name='inspiration' tabIndex={-1} />
+                        <input type="number" name='proficiencyBonus' value={activeCharacter.proficiencyBonus} onChange={(e) => setActiveCharacter(curr => ({...curr, proficiencyBonus: Number(e.target.value)}))} placeholder='PRF' tabIndex={-1} />
+                        <input type="checkbox" name='inspiration' checked={activeCharacter.inspiration} onChange={(e) => setActiveCharacter(curr => ({...curr, inspiration: e.target.checked}))} tabIndex={-1} />
                     </section>
                     <section>
-                        <textarea name='savingThrows' placeholder='saving throws' tabIndex={-1} />
-                        <textarea name='skills' placeholder='skills' tabIndex={-1} />
+                        <textarea name='savingThrows' value={activeCharacter.savingThrows.join(',')} onChange={(e) => setActiveCharacter(curr => ({...curr, savingThrows: e.target.value.split(',')}))} placeholder='saving throws' tabIndex={-1} />
+                        <textarea name='skills' value={activeCharacter.skills.join(',')} onChange={(e) => setActiveCharacter(curr => ({...curr, skills: e.target.value.split(',')}))} placeholder='skills' tabIndex={-1} />
                     </section>
                     <section>
-                        <textarea name='languages' placeholder='languages' tabIndex={-1} />
-                        <textarea name='features' placeholder='features' tabIndex={-1} />
+                        <textarea name='languages' value={activeCharacter.languages.join(',')} onChange={(e) => setActiveCharacter(curr => ({...curr, languages: e.target.value.split(',')}))} placeholder='languages' tabIndex={-1} />
+                        <textarea name='features' value={activeCharacter.features.join(',')} onChange={(e) => setActiveCharacter(curr => ({...curr, features: e.target.value.split(',')}))} placeholder='features' tabIndex={-1} />
                     </section>
                 </FoldableSection>
                 <FoldableSection title='Equipment'>
                     <section>
-                        <MultiQuerySelect queriedData={queriedData} name={"inventory"} keyOverride={"equipment"}/>
-                        <MultiQuerySelect queriedData={queriedData} name={"equipment"}/>
+                        <MultiQuerySelect queriedData={queriedData} name={"inventory"} keyOverride={"equipment"} value={{get: activeCharacter, set: setActiveCharacter}}/>
+                        <MultiQuerySelect queriedData={queriedData} name={"equipment"} value={{get: activeCharacter, set: setActiveCharacter}}/>
                     </section>
                     <section>
-                        <input type="number" name='copper' placeholder='Cu' tabIndex={-1} />
-                        <input type="number" name='silver' placeholder='Ag' tabIndex={-1} />
-                        <input type="number" name='gold' placeholder='Au' tabIndex={-1} />
-                        <input type="number" name='platinum' placeholder='Pt' tabIndex={-1} />
+                        <input type="number" name='copper' value={activeCharacter.copper} onChange={(e) => setActiveCharacter(curr => ({...curr, copper: Number(e.target.value)}))} placeholder='Cu' tabIndex={-1} />
+                        <input type="number" name='silver' value={activeCharacter.silver} onChange={(e) => setActiveCharacter(curr => ({...curr, silver: Number(e.target.value)}))} placeholder='Ag' tabIndex={-1} />
+                        <input type="number" name='gold' value={activeCharacter.gold} onChange={(e) => setActiveCharacter(curr => ({...curr, gold: Number(e.target.value)}))} placeholder='Au' tabIndex={-1} />
+                        <input type="number" name='platinum' value={activeCharacter.platinum} onChange={(e) => setActiveCharacter(curr => ({...curr, platinum: Number(e.target.value)}))} placeholder='Pt' tabIndex={-1} />
                     </section>
                 </FoldableSection>
                 <FoldableSection title='Spells'>
                     <section>
-                        <input type="text" name='spellcastingClass' placeholder='spellcasting class' tabIndex={-1} />
-                        <input type="text" name='spellcastingAbility' placeholder='spellcasting ability' tabIndex={-1} />
+                        <input type="text" name='spellcastingClass' value={activeCharacter.spellcastingClass} onChange={(e) => setActiveCharacter(curr => ({...curr, spellcastingClass: e.target.value}))} placeholder='spellcasting class' tabIndex={-1} />
+                        <input type="text" name='spellcastingAbility' value={activeCharacter.spellcastingAbility} onChange={(e) => setActiveCharacter(curr => ({...curr, spellcastingAbility: e.target.value}))} placeholder='spellcasting ability' tabIndex={-1} />
                     </section>
                     <section>
-                        <textarea name='spellslots' placeholder='spellslots' tabIndex={-1} />
-                        <textarea name='spells' placeholder='spells' tabIndex={-1} />
+                        <textarea name='spellSlots' value={activeCharacter.spellSlots?.join(',')} onChange={(e) => setActiveCharacter(curr => ({...curr, spellSlots: e.target.value.split(',').map(Number)}))} placeholder='spellslots' tabIndex={-1} />
+                        <textarea name='spells' value={activeCharacter.spells?.join(',')} onChange={(e) => setActiveCharacter(curr => ({...curr, spells: e.target.value.split(',')}))} placeholder='spells' tabIndex={-1} />
                     </section>
                 </FoldableSection>
                 <FoldableSection title='Details'>
                     <section>
-                        <input type="text" name='personalityTraits' placeholder='personality' tabIndex={-1} />
-                        <input type="text" name="ideals" placeholder='ideals' tabIndex={-1} />
-                        <input type="text" name="bonds" placeholder='bonds' tabIndex={-1} />
+                        <input type="text" name='personalityTraits' value={activeCharacter.personalityTraits} onChange={(e) => setActiveCharacter(curr => ({...curr, personalityTraits: e.target.value}))} placeholder='personality' tabIndex={-1} />
+                        <input type="text" name="ideals" value={activeCharacter.ideals} onChange={(e) => setActiveCharacter(curr => ({...curr, ideals: e.target.value}))} placeholder='ideals' tabIndex={-1} />
+                        <input type="text" name="bonds" value={activeCharacter.bonds} onChange={(e) => setActiveCharacter(curr => ({...curr, bonds: e.target.value}))} placeholder='bonds' tabIndex={-1} />
                     </section>
                     <section>
-                        <input type="text" name="flaws" placeholder='flaws' tabIndex={-1} />
-                        <input type="text" name="backstory" placeholder='backstory' tabIndex={-1} />
+                        <input type="text" name="flaws" value={activeCharacter.flaws} onChange={(e) => setActiveCharacter(curr => ({...curr, flaws: e.target.value}))} placeholder='flaws' tabIndex={-1} />
+                        <input type="text" name="backstory" value={activeCharacter.backstory} onChange={(e) => setActiveCharacter(curr => ({...curr, backstory: e.target.value}))} placeholder='backstory' tabIndex={-1} />
                     </section>
                 </FoldableSection>
-                <section>
-                    <button type="submit" disabled={!isCreatorOpen} onClick={(e) => {
+                <section>                    <button type="submit" disabled={!isCreatorOpen} onClick={(e) => {
                         const form = (document.getElementById("character-creator") as HTMLFormElement);
                         for (let i = 0; i < form.elements.length; i++) {
                             if (["INPUT", "TEXTAREA"].includes(form.elements[i].nodeName) && !(form.elements[i] as HTMLInputElement).checkValidity())
@@ -259,9 +281,8 @@ export default function CharacterTracker()
                         window.blur();
                     }}>Done</button>
                     <button type="reset" disabled={!isCreatorOpen} onClick={() => {
+                        setActiveCharacter(emptyCharacter)
                         setIsCreatorOpen(false);
-                        window.sessionStorage.setItem("charID", "-1");
-                        window.blur();
                     }}>Cancel</button>
                 </section>
             </form>
@@ -282,7 +303,9 @@ export default function CharacterTracker()
                 }}/>
 
                 <button disabled={isCreatorOpen} onClick={() => {
-                    setIsCreatorOpen(curr => !curr);
+                    setActiveCharacter(emptyCharacter)
+                    window.sessionStorage.setItem("newChar", "true");
+                    setIsCreatorOpen(true);
                 }}>
                     +
                 </button>
@@ -296,44 +319,8 @@ export default function CharacterTracker()
                             });
                         });
                     }} editFunction={(() => {
-                        window.sessionStorage.setItem("charID", character.id.toString());
-                        const elemList = (document.getElementById("character-creator") as HTMLFormElement).elements;
-                        for (let i = 0; i < elemList.length; i++)
-                        {
-                            switch (elemList[i].nodeName) {
-                                case "INPUT":
-                                    switch (elemList[i].getAttribute("type")) {
-                                        case "text":
-                                            (elemList[i] as HTMLInputElement).value = character[elemList[i].getAttribute("name")! as keyof characterType]!.toString();
-                                            break;
-                                        case "number":
-                                            (elemList[i] as HTMLInputElement).valueAsNumber = Number(character[elemList[i].getAttribute("name")! as keyof characterType]!);
-                                            break;
-                                        case "checkbox":
-                                            (elemList[i] as HTMLInputElement).value = character[elemList[i].getAttribute("name")! as keyof characterType]!.toString();
-                                            break;
-                                    }
-                                    break;
-                                case "TEXTAREA":
-                                    (elemList[i] as HTMLTextAreaElement).value = (character[elemList[i].getAttribute("name")! as keyof characterType]! as string[]).join('\n');
-                                    break;
-                                case "SELECT":
-                                    if (!findParentWithClass(elemList[i] as HTMLElement, "multi-query-container")) (elemList[i] as HTMLSelectElement).value = character[elemList[i].getAttribute("name")! as keyof characterType]!.toString();
-                                    else if ((elemList[i] as HTMLSelectElement).name.includes("multiQueryData")) 
-                                    {
-                                        const dbValues = character[elemList[i].getAttribute("name")!.split('-')[1] as keyof characterType];
-                                        let valObj = {};
-                                        (dbValues as any).forEach((val: any) => {
-                                            valObj = {...valObj, [val.key]: val.value};
-                                        });
-                                        
-                                        window.sessionStorage.setItem(`multi-select-${(elemList[i] as HTMLSelectElement).name.split('-')[1]}`, JSON.stringify(valObj));
-                                    }
-                                default:
-                                    break;
-                            }
-                        }
-
+                        window.sessionStorage.setItem("newChar", "false");
+                        setActiveCharacter(character);
                         setIsCreatorOpen(true);
                     })}/>
                 ))}
