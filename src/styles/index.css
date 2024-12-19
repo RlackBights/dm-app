@@ -268,7 +268,12 @@ select:focus {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2vmin;
+}
+
+.multi-query-container > p {
+  margin: 0;
+  padding: 0;
+  font-size: 3vmin;
 }
 
 .multi-query-header {
@@ -294,6 +299,21 @@ select:focus {
   aspect-ratio: 1;
   border-radius: 100%;
   padding: 0.5vmin;
+}
+
+.number-input-container {
+  border: 2px dashed var(--primary);
+  border-radius: 1rem;
+  padding: 1vmin;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1vmin;
+}
+
+.number-input-container > p {
+  margin: 0;
 }
 
 /*

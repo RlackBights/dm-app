@@ -5,6 +5,7 @@ import SearchBar, { searchBarValue } from '../components/searchBar';
 import FoldableSection from '../components/foldableSection';
 import QuerySelect from '../components/querySelect';
 import MultiQuerySelect from '../components/multiQuerySelect';
+import { NumberInput } from '../components/numberInput';
 
 export interface characterType {
     id: number;
@@ -157,11 +158,6 @@ export default function CharacterTracker()
     }, [])
 
     useEffect(() => {
-        console.log(activeCharacter);
-    }, [activeCharacter])
-    
-
-    useEffect(() => {
         db.getAll().then((res) => {
             setCharacters(res);
         })
@@ -172,7 +168,7 @@ export default function CharacterTracker()
             <form id='character-creator' style={{marginBottom: isCreatorOpen ? "0" : "-200vh"}} onSubmit={(e) => {
                 e.preventDefault();
                 
-                if (window.sessionStorage.getItem("newChar") == "true") {
+                if (window.sessionStorage.getItem("newChar") === "true") {
                     const { id, ...newChar} = activeCharacter;
                     db.add(newChar).then(() => {
                         db.getAll().then((res) => {
@@ -196,7 +192,7 @@ export default function CharacterTracker()
                         <input type="text" name='name' value={activeCharacter.name} onChange={(e) => setActiveCharacter(curr => ({...curr, name: e.target.value}))} required placeholder="Name" tabIndex={-1} />
                         <QuerySelect queriedData={queriedData} name="race" value={{get: activeCharacter, set: setActiveCharacter}}/>
                         <QuerySelect queriedData={queriedData} name="class" value={{get: activeCharacter, set: setActiveCharacter}} keyOverride="classes"/>
-                        <input type="number" name="level" value={activeCharacter.level} onChange={(e) => setActiveCharacter(curr => ({...curr, level: Number(e.target.value)}))} placeholder='LVL' tabIndex={-1} />
+                        <NumberInput name='level' value={{ get: activeCharacter, set: setActiveCharacter }} />
                     </section>
                     <section>
                         <QuerySelect queriedData={queriedData} name="background" value={{get: activeCharacter, set: setActiveCharacter}}/>
@@ -207,25 +203,25 @@ export default function CharacterTracker()
                 </FoldableSection>
                 <FoldableSection title="Stats">
                     <section>
-                        <input type="number" name='strength' value={activeCharacter.strength} onChange={(e) => setActiveCharacter(curr => ({...curr, strength: Number(e.target.value)}))} placeholder='STR' tabIndex={-1} />
-                        <input type="number" name='dexterity' value={activeCharacter.dexterity} onChange={(e) => setActiveCharacter(curr => ({...curr, dexterity: Number(e.target.value)}))} placeholder='DEX' tabIndex={-1} />
-                        <input type="number" name='constitution' value={activeCharacter.constitution} onChange={(e) => setActiveCharacter(curr => ({...curr, constitution: Number(e.target.value)}))} placeholder='CON' tabIndex={-1} />
-                        <input type="number" name='intelligence' value={activeCharacter.intelligence} onChange={(e) => setActiveCharacter(curr => ({...curr, intelligence: Number(e.target.value)}))} placeholder='INT' tabIndex={-1} />
-                        <input type="number" name='wisdom' value={activeCharacter.wisdom} onChange={(e) => setActiveCharacter(curr => ({...curr, wisdom: Number(e.target.value)}))} placeholder='WIS' tabIndex={-1} />
-                        <input type="number" name='charisma' value={activeCharacter.charisma} onChange={(e) => setActiveCharacter(curr => ({...curr, charisma: Number(e.target.value)}))} placeholder='CHA' tabIndex={-1} />
+                        <NumberInput name='strength' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='dexterity' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='constitution' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='intelligence' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='wisdom' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='charisma' value={{ get: activeCharacter, set: setActiveCharacter }} />
                     </section>
                     <section>
-                        <input type="number" name='maxHp' value={activeCharacter.maxHp} onChange={(e) => setActiveCharacter(curr => ({...curr, maxHp: Number(e.target.value)}))} placeholder='MHP' tabIndex={-1} /> 
-                        <input type="number" name='currentHp' value={activeCharacter.currentHp} onChange={(e) => setActiveCharacter(curr => ({...curr, currentHp: Number(e.target.value)}))} placeholder='HP' tabIndex={-1} />
-                        <input type="number" name='temporaryHp' value={activeCharacter.temporaryHp} onChange={(e) => setActiveCharacter(curr => ({...curr, temporaryHp: Number(e.target.value)}))} placeholder='THP' tabIndex={-1} />
-                        <input type="number" name='armorClass' value={activeCharacter.armorClass} onChange={(e) => setActiveCharacter(curr => ({...curr, armorClass: Number(e.target.value)}))} placeholder='AC' tabIndex={-1} />
-                        <input type="number" name='initiative' value={activeCharacter.initiative} onChange={(e) => setActiveCharacter(curr => ({...curr, initiative: Number(e.target.value)}))} placeholder='INI' tabIndex={-1} />
-                        <input type="number" name='speed' value={activeCharacter.speed} onChange={(e) => setActiveCharacter(curr => ({...curr, speed: Number(e.target.value)}))} placeholder='SPD' tabIndex={-1} />
+                        <NumberInput name='maxHp' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='currentHp' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='temporaryHp' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='armorClass' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='initiative' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='speed' value={{ get: activeCharacter, set: setActiveCharacter }} />
                     </section>
                 </FoldableSection>
                 <FoldableSection title="Proficiency">
                     <section>
-                        <input type="number" name='proficiencyBonus' value={activeCharacter.proficiencyBonus} onChange={(e) => setActiveCharacter(curr => ({...curr, proficiencyBonus: Number(e.target.value)}))} placeholder='PRF' tabIndex={-1} />
+                    <NumberInput name='proficiencyBonus' value={{ get: activeCharacter, set: setActiveCharacter }} />
                         <input type="checkbox" name='inspiration' checked={activeCharacter.inspiration} onChange={(e) => setActiveCharacter(curr => ({...curr, inspiration: e.target.checked}))} tabIndex={-1} />
                     </section>
                     <section>
@@ -243,10 +239,10 @@ export default function CharacterTracker()
                         <MultiQuerySelect queriedData={queriedData} name={"equipment"} value={{get: activeCharacter, set: setActiveCharacter}}/>
                     </section>
                     <section>
-                        <input type="number" name='copper' value={activeCharacter.copper} onChange={(e) => setActiveCharacter(curr => ({...curr, copper: Number(e.target.value)}))} placeholder='Cu' tabIndex={-1} />
-                        <input type="number" name='silver' value={activeCharacter.silver} onChange={(e) => setActiveCharacter(curr => ({...curr, silver: Number(e.target.value)}))} placeholder='Ag' tabIndex={-1} />
-                        <input type="number" name='gold' value={activeCharacter.gold} onChange={(e) => setActiveCharacter(curr => ({...curr, gold: Number(e.target.value)}))} placeholder='Au' tabIndex={-1} />
-                        <input type="number" name='platinum' value={activeCharacter.platinum} onChange={(e) => setActiveCharacter(curr => ({...curr, platinum: Number(e.target.value)}))} placeholder='Pt' tabIndex={-1} />
+                        <NumberInput name='copper' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='silver' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='gold' value={{ get: activeCharacter, set: setActiveCharacter }} />
+                        <NumberInput name='platinum' value={{ get: activeCharacter, set: setActiveCharacter }} />
                     </section>
                 </FoldableSection>
                 <FoldableSection title='Spells'>
