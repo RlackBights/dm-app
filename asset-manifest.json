@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/dm-app/static/css/main.1d3c2f46.css",
-    "main.js": "/dm-app/static/js/main.993bcc7f.js",
+    "main.css": "/dm-app/static/css/main.04d6d64c.css",
+    "main.js": "/dm-app/static/js/main.3176a3da.js",
     "static/media/Steamwreck-07pd.ttf": "/dm-app/static/media/Steamwreck-07pd.ecd13c92334dea1bdcbe.ttf",
     "index.html": "/dm-app/index.html",
-    "main.1d3c2f46.css.map": "/dm-app/static/css/main.1d3c2f46.css.map",
-    "main.993bcc7f.js.map": "/dm-app/static/js/main.993bcc7f.js.map"
+    "main.04d6d64c.css.map": "/dm-app/static/css/main.04d6d64c.css.map",
+    "main.3176a3da.js.map": "/dm-app/static/js/main.3176a3da.js.map"
   },
   "entrypoints": [
-    "static/css/main.1d3c2f46.css",
-    "static/js/main.993bcc7f.js"
+    "static/css/main.04d6d64c.css",
+    "static/js/main.3176a3da.js"
   ]
 }
