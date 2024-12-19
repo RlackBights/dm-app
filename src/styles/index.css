@@ -268,7 +268,12 @@ select:focus {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2vmin;
+}
+
+.multi-query-container > p {
+  margin: 0;
+  padding: 0;
+  font-size: 3vmin;
 }
 
 .multi-query-header {
@@ -296,6 +301,21 @@ select:focus {
   padding: 0.5vmin;
 }
 
+.number-input-container {
+  border: 2px dashed var(--primary);
+  border-radius: 1rem;
+  padding: 1vmin;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1vmin;
+}
+
+.number-input-container > p {
+  margin: 0;
+}
+
 /*
  .d8888b.  d8b      888          888                       
 d88P  Y88b Y8P      888          888                       
@@ -318,6 +338,7 @@ Y88b  d88P 888 Y88b 888 Y8b.     888 d88P 888  888 888
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 
 #sidebar-header {
@@ -399,6 +420,11 @@ Y88b  d88P 888 Y88b 888 Y8b.     888 d88P 888  888 888
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  animation-duration: 1s;
+  animation-name: welcome-message;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  z-index: 0;
 }
 
 #welcome-title {
@@ -558,5 +584,17 @@ d88P     888 888  888 888 888  888  888 "Y888888  "Y888 888  "Y88P"  888  888  8
 
   to {
     transform: rotate(60deg);
+  }
+}
+
+@keyframes welcome-message {
+  from {
+    filter: opacity(0);
+    margin-top: 20vh;
+  }
+
+  to {
+    filter: opacity(1);
+    margin-top: 0vh;
   }
 }

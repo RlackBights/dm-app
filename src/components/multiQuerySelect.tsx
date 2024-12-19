@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import { QuerySelectData } from "./querySelect";
 
-export default function MultiQuerySelect({ queriedData, name, keyOverride } : QuerySelectData)
+export function capitalize(str: string): string
+{
+    return str
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, s => s.toUpperCase());
+}
+
+export default function MultiQuerySelect({ queriedData, name, keyOverride, value } : QuerySelectData)
 {
     const [content, setContent] = useState<Array<string>>([]);
-    const [selected, setSelected] = useState({});
+    const [lastUpdated, setLastUpdated] = useState("");
     const [inputVal, setInputVal] = useState("");
 
     useEffect(() => {
@@ -14,43 +21,58 @@ export default function MultiQuerySelect({ queriedData, name, keyOverride } : Qu
     }, [queriedData])
 
     useEffect(() => {
-        console.log(window.sessionStorage.getItem(`multi-select-${name}`)!);
-        (Object.keys(selected)).forEach(key => {
-            if (isNaN(selected[key as keyof typeof selected])) {
-                let newObj = selected;
-                delete newObj[key as keyof typeof newObj]
-                setSelected(newObj);
+        value.get[name].forEach((item: any) => {
+            if (item.value <= 0) {
+                value.set((curr: any) => ({...curr, [name]: curr[name].filter((i: any) => i.key != item.key)}));
             }
         });
-
-        window.sessionStorage.setItem(`multi-select-${name}`, JSON.stringify(selected));
-    }, [selected])
+    }, [value.get[name]])
 
     return (
         <div className="multi-query-container">
+            <p>{capitalize(name)}</p>
             <div className="multi-query-header">
                 <input type="text" name="multiQuerySearch" placeholder="Search" tabIndex={-1} value={inputVal} onChange={(e) => {
                     setInputVal(e.target.value);
                 }}/>
-                <select name={`multiQueryData-${name}`}>
-                    {Object.keys(selected).filter(s => selected[s as keyof typeof selected]).map(s => (
-                        <option value={s.toLowerCase()}>{s} - {selected[s as keyof typeof selected]}</option>
+                <select name={`multiQueryData-${name}`} value={lastUpdated} onChange={(e) => setLastUpdated(e.target.value)}>
+                    {value.get[name].map((item: any) => (
+                        <option value={item.key.toLowerCase()} key={item.key}>{item.key} - {item.value}</option>
                     ))}
                 </select>
                 <div>
                     <button type="button" onClick={(e) => {
+                        if (value.get[name].length < 1) return;
                         const val = ((e.target as HTMLElement).parentElement?.previousSibling as HTMLSelectElement).value;
-                        setSelected(curr => ({...curr, [val as keyof typeof selected]: selected[val as keyof typeof selected] + 1}));
+                        let items = value.get[name];
+                        items.find((v: any) => v.key === val)!.value++;
+                        value.set((curr: any) => ({...curr, [name]: items}));
                     }}>+</button>
                     <button type="button" onClick={(e) => {
+                        if (value.get[name].length < 1) return;
                         const val = ((e.target as HTMLElement).parentElement?.previousSibling as HTMLSelectElement).value;
-                        setSelected(curr => ({...curr, [val as keyof typeof selected]: selected[val as keyof typeof selected] - 1}));
+                        let items = value.get[name];
+                        if (items.find((v: any) => v.key === val)!.value > 1) {
+                            items.find((v: any) => v.key === val)!.value--;   
+                        } else {
+                            items = items.filter((i: any) => i.key !== val);
+                        }
+                        value.set((curr: any) => ({...curr, [name]: items}));
                     }}>-</button>
                 </div>
             </div>
             <select name="multiQuerySelect" multiple onClick={(e) => {
                 const val = e.currentTarget.value;
-                setSelected(curr => ({...curr, [val]: (isNaN(curr[val as keyof typeof selected]) ? 1 : curr[val as keyof typeof selected] + 1)}));
+                let items = value.get[name];
+                if (items.find((v: any) => v.key === val)) {
+                    items.find((v: any) => v.key === val)!.value++;
+                } else
+                {
+                    items.push({ key: val, value: 1});
+                }
+                value.set((curr: any) => ({...curr, [name]: items}));
+                setLastUpdated(val);
+                console.log(val);
                 setInputVal("");
             }}>
                 {content.filter(c => c.toLowerCase().includes(inputVal.toLowerCase())).map(c => (
